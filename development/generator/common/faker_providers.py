@@ -35,7 +35,7 @@ class ITAAC(BaseProvider):
         ]
         return random.choice(facilities)
 
-    def targeted_flag(self):
+    def true_false_flag(self):
         self.target_flag_value = random.choice([True, False])
         return self.target_flag_value
 
@@ -46,3 +46,4 @@ class ITAAC(BaseProvider):
             return_value = random.choice(list(range(1,60)))
 
         return return_value
+
