@@ -3,8 +3,8 @@ version: "3.5"
 services:
   synthetic_data_generator:
     build: 
-      context: ./generator
-      dockerfile: ../DataGeneratorDockerfile
+      context: ../tests/generator
+      dockerfile: ../../development/DataGeneratorDockerfile
     container_name: synthetic_data_generator
     command: tail -f /dev/null
     # hostname: synthetic_data_generator
@@ -12,9 +12,7 @@ services:
     #   - VAR=<conn_str>
     volumes:
       - ./data:/data:rw
-      - ./generator:/generator:rw
-    # ports:
-    #   - 8180:8080
+      - ../tests/generator:/generator:rw
     networks:
       - datazone
 
