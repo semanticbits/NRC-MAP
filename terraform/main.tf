@@ -5,6 +5,6 @@ module "resource_group" {
 
 module "networking" {
   source        = "./modules/networking"
-  address_space = ["${var.address_space[terraform.workspace]}"]
+  address_space = "${var.address_space[terraform.workspace]}"
   location      = "${lookup(var.location, terraform.workspace)}"
 }
