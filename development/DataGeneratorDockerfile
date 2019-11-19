@@ -2,14 +2,17 @@ FROM python:3.7
 
 USER root
 
-RUN mkdir -p generator
+RUN mkdir -p app/src/map/generator/data
 
-WORKDIR /generator
+WORKDIR app/src/map/generator
 
-COPY * ./
+COPY common ./common/
+COPY requirements.txt ./
+COPY run.sh ./
+COPY vogtle_data_generator.py ./
 
 RUN apt-get update
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-CMD /generator/run.sh
+ENTRYPOINT ["/app/src/map/generator/run.sh"]
