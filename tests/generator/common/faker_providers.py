@@ -3,6 +3,7 @@ import random
 
 from faker.providers import BaseProvider
 
+
 class ITAAC(BaseProvider):
     """
     Class for generating synthetic data related to ITAACs
@@ -42,8 +43,7 @@ class ITAAC(BaseProvider):
     def target_amt(self):
         return_value = None
 
-        if self.target_flag_value == True:
-            return_value = random.choice(list(range(1,60)))
+        if self.target_flag_value is True:
+            return_value = random.choice(list(range(1, 60)))
 
         return return_value
-

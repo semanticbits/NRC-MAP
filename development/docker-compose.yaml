@@ -11,8 +11,7 @@ services:
     # environment:
     #   - VAR=<conn_str>
     volumes:
-      - ./data:/data:rw
-      - ../tests/generator:/generator:rw
+      - ../tests/generator:/app/src/map/generator:rw
     networks:
       - datazone
 
