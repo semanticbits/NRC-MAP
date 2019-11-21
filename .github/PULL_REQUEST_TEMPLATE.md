@@ -11,7 +11,7 @@
 ### Checklist
 <!-- Remove items that do not apply. For completed items, change [] to [x]. -->
 
-- [] Build passing
+- [] Passes PEP8 Linting
 - [] Documentation: <provide link>
 
 ### Additional JIRA Tickets (optional)
