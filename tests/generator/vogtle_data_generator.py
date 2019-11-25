@@ -8,6 +8,7 @@ This script currently generates data for the following dashboard sections:
 
 """
 import logging
+import random
 import sys
 from argparse import ArgumentParser, ArgumentError
 from datetime import date, timedelta
@@ -59,6 +60,8 @@ class VogtleDataGenerator(object):
         self.generate_news_feed(100)
         self.generate_public_meetings(100)
         self.generate_calendar(2019, 2021)
+        self.generate_license_actions(100)
+        self.generate_crop_findings(100)
 
     def generate_inspections(self, rows):
         """
@@ -112,9 +115,7 @@ class VogtleDataGenerator(object):
                                         nb_words=12,
                                         variable_nb_words=False,
                                         ext_word_list=None)
-                datetime = self.fake.format('date_time_this_year',
-                                            before_now=True,
-                                            after_now=True,
+                datetime = self.fake.format('future_datetime',
                                             tzinfo=None)
                 source_url = "http://www.{}.com/{}".format(
                     self.fake.format('word'), self.fake.format('word'))
@@ -159,6 +160,58 @@ class VogtleDataGenerator(object):
                                    time,
                                    location,
                                    contact))
+
+    def generate_license_actions(self, rows):
+        """
+        Generate synthetic data for License Actions
+
+        """
+        header = "id|text|status|date\n"
+
+        with open('{}license_actions.csv'.format(self.directory), 'w') \
+                as output_file:
+
+            output_file.write(header)
+            for license_action_id in range(rows):
+                text = self.fake.format('sentence',
+                                        nb_words=10,
+                                        variable_nb_words=True,
+                                        ext_word_list=None)
+                license_action_date = self.fake.format('future_datetime',
+                                                       tzinfo=None)
+                status = random.choice(["Open", "Closed"])
+
+                output_file.write("%s|%s|%s|%s\n" %
+                                  (license_action_id,
+                                   text,
+                                   status,
+                                   license_action_date))
+
+    def generate_crop_findings(self, rows):
+        """
+        Generate synthetic data for License Actions
+
+        """
+        header = "id|description|status|date\n"
+
+        with open('{}crop_findings.csv'.format(self.directory), 'w') \
+                as output_file:
+
+            output_file.write(header)
+            for crop_finding_id in range(rows):
+                description = self.fake.format('sentence',
+                                               nb_words=10,
+                                               variable_nb_words=True,
+                                               ext_word_list=None)
+                datetime = self.fake.format('future_datetime',
+                                            tzinfo=None)
+                status = random.choice(["Open", "Closed"])
+
+                output_file.write("%s|%s|%s|%s\n" %
+                                  (crop_finding_id,
+                                   description,
+                                   status,
+                                   datetime))
 
     def generate_calendar(self, start_year, end_year):
         """
