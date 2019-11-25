@@ -64,8 +64,8 @@ class VogtleDataGenerator(object):
         """
         Generate synthetic data for Inspections
         """
-        header = "id|itaac_status|icn_status|effort_required|facility|" \
-                 "targeted_flag|target_amt\n"
+        header = "id|itaac_status|icn_status|est_completion_date|" \
+                 "effort_required|facility|targeted_flag|target_amt\n"
 
         with open('{}inspections.csv'
                   .format(self.directory), 'w') as output_file:
@@ -74,15 +74,19 @@ class VogtleDataGenerator(object):
             for itaac_id in range(rows):
                 itaac_status = self.fake.format('itaac_status')
                 icn_status = self.fake.format('icn_status')
+                est_completion_date = self.fake.format('future_datetime',
+                                                       tzinfo=None)
+
                 effort_required = self.fake.format('effort_required')
                 facility = self.fake.format('facility')
                 targeted_flag = self.fake.format('true_false_flag')
                 target_amt = self.fake.format('target_amt')
 
-                output_file.write("%s|%s|%s|%s|%s|%s|%s\n" %
+                output_file.write("%s|%s|%s|%s|%s|%s|%s|%s\n" %
                                   (itaac_id,
                                    itaac_status,
                                    icn_status,
+                                   est_completion_date,
                                    effort_required,
                                    facility,
                                    targeted_flag,
