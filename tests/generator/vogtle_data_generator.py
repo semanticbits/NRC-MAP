@@ -5,6 +5,8 @@ This script currently generates data for the following dashboard sections:
 - News Feed
 - Public Meetings
 - General Calendar
+- License Actions
+- cROP Actions
 
 """
 import logging
