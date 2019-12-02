@@ -1,4 +1,9 @@
-from faker import Faker
+"""Faker Provider
+
+This Provider will be used for custom faker provider classes for
+synthetic data.
+
+"""
 import random
 
 from faker.providers import BaseProvider
@@ -10,7 +15,11 @@ class ITAAC(BaseProvider):
     """
     target_flag_value = None
 
-    def itaac_status(self):
+    @staticmethod
+    def itaac_status():
+        """
+        Generate a random selection of ITAAC status'
+        """
         status_options = [
             'UIN Accepted',
             'ICN Verified',
@@ -18,7 +27,11 @@ class ITAAC(BaseProvider):
         ]
         return random.choice(status_options)
 
-    def icn_status(self):
+    @staticmethod
+    def icn_status():
+        """
+        Generate a random selection of ICN status'
+        """
         status_options = [
             'Pending',
             'Approved',
@@ -26,10 +39,18 @@ class ITAAC(BaseProvider):
         ]
         return random.choice(status_options)
 
-    def effort_required(self):
+    @staticmethod
+    def effort_required():
+        """
+        Generate a randon value for effort required (in hours)
+        """
         return random.choice(list(range(1, 80)))
 
-    def facility(self):
+    @staticmethod
+    def facility():
+        """
+        Generate a random selection of Vogtle facilities
+        """
         facilities = [
             'Vogtle 3',
             'Vogtle 4'
@@ -37,10 +58,16 @@ class ITAAC(BaseProvider):
         return random.choice(facilities)
 
     def true_false_flag(self):
+        """
+        Generate a random true/false value
+        """
         self.target_flag_value = random.choice([True, False])
         return self.target_flag_value
 
     def target_amt(self):
+        """
+        Generate a random target amount
+        """
         return_value = None
 
         if self.target_flag_value is True:
