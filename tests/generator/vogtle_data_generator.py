@@ -114,7 +114,7 @@ class VogtleDataGenerator(object):
                                          variable_nb_words=False,
                                          ext_word_list=None)
                 text = self.fake.format('sentence',
-                                        nb_words=12,
+                                        nb_words=100,
                                         variable_nb_words=False,
                                         ext_word_list=None)
                 datetime = self.fake.format('future_datetime',
