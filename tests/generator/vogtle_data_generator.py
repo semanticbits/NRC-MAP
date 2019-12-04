@@ -10,12 +10,15 @@ This script currently generates data for the following dashboard sections:
 
 """
 import logging
+import os
+from os import path
 import random
 import sys
 from argparse import ArgumentParser, ArgumentError
 from datetime import date, timedelta
 from faker import Faker
 from common.faker_providers import ITAAC
+
 
 __version__ = "0.1.0"
 
@@ -248,6 +251,9 @@ if __name__ == '__main__':
     except ArgumentError as err:
         ARG_PARSER.print_help()
         ARG_PARSER.exit()
+
+    if not path.exists(OPTIONS.directory):
+        os.mkdir(OPTIONS.directory)
 
     VOGTLE_GENERATOR = VogtleDataGenerator(directory=OPTIONS.directory)
     VOGTLE_GENERATOR.generate_default()
