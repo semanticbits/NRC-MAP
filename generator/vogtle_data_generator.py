@@ -57,17 +57,6 @@ class VogtleDataGenerator(object):
         if directory:
             self.directory = directory
 
-    def generate_default(self):
-        """
-        Generate a predetermined set of synthetic data
-        """
-        self.generate_inspections(800)
-        self.generate_news_feed(100)
-        self.generate_public_meetings(100)
-        self.generate_calendar(2019, 2021)
-        self.generate_license_actions(100)
-        self.generate_crop_findings(100)
-
     def generate_inspections(self, rows):
         """
         Generate synthetic data for Inspections
@@ -256,6 +245,22 @@ if __name__ == '__main__':
         os.mkdir(OPTIONS.directory)
 
     VOGTLE_GENERATOR = VogtleDataGenerator(directory=OPTIONS.directory)
-    VOGTLE_GENERATOR.generate_default()
+    CONFIG = {
+        'inspections': 800,
+        'news': 100,
+        'public_meetings': 100,
+        'start_date': 2019,
+        'end_date': 2021,
+        'license_actions': 100,
+        'crop_findings': 100
+    }
+
+    VOGTLE_GENERATOR.generate_inspections(CONFIG['inspections'])
+    VOGTLE_GENERATOR.generate_news_feed(CONFIG['news'])
+    VOGTLE_GENERATOR.generate_public_meetings(CONFIG['public_meetings'])
+    VOGTLE_GENERATOR.generate_calendar(CONFIG['start_date'],
+                                       CONFIG['end_date'])
+    VOGTLE_GENERATOR.generate_license_actions(CONFIG['license_actions'])
+    VOGTLE_GENERATOR.generate_crop_findings(CONFIG['crop_findings'])
 
     logging.info("Synthetic data generation complete")

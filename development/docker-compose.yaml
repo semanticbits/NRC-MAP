@@ -3,15 +3,13 @@ version: "3.5"
 services:
   synthetic_data_generator:
     build: 
-      context: ../tests/generator
-      dockerfile: ../../development/DataGeneratorDockerfile
+      context: ../generator
+      dockerfile: ../development/DataGeneratorDockerfile
     container_name: synthetic_data_generator
-    command: tail -f /dev/null
-    # hostname: synthetic_data_generator
-    # environment:
-    #   - VAR=<conn_str>
+    command: tail -f /dev/null # Run Forever
     volumes:
-      - ../tests/generator:/app/src/map/generator:rw
+      - ../generator:/app/src/map/generator:rw
+      - ../tests:/app/src/map/tests:rw
     networks:
       - datazone
 

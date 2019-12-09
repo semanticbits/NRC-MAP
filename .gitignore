@@ -4,3 +4,5 @@ data
 *.pyc
 __pycache__
 *.twbr
+*pytest-report.xml
+*coverage.xml
