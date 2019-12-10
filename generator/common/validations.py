@@ -28,6 +28,4 @@ def validate_csv(filename, header, cols, rows):
     # validate row count
     row_result = data.shape[0] == rows
 
-    print('%d, %d' % (data.shape[1], data.shape[0]))
-    print('%s, %s, %s' % (header_result, column_result, row_result))
     return (header_result == column_result == row_result) is True
