@@ -228,39 +228,45 @@ class VogtleDataGenerator(object):
                 output_file.write("%s|%s\n" % (i, day))
 
 
-if __name__ == '__main__':
+def generate_default(args=None, config=None):
+    """Generate the default set of synthetic data
+    """
     logging.info("Generating synthetic data...")
-    if not sys.argv[1:]:
-        ARG_PARSER.print_help()
-        ARG_PARSER.exit()
-
-    OPTIONS = {}
+    options = {}
     try:
-        OPTIONS = ARG_PARSER.parse_args()
-    except ArgumentError as err:
+        if args:
+            options = ARG_PARSER.parse_args(args)
+        else:
+            options = ARG_PARSER.parse_args()
+    except ArgumentError:
         ARG_PARSER.print_help()
         ARG_PARSER.exit()
 
-    if not path.exists(OPTIONS.directory):
-        os.mkdir(OPTIONS.directory)
+    os.makedirs(options.directory, exist_ok=True)
 
-    VOGTLE_GENERATOR = VogtleDataGenerator(directory=OPTIONS.directory)
-    CONFIG = {
-        'inspections': 800,
-        'news': 100,
-        'public_meetings': 100,
-        'start_date': 2019,
-        'end_date': 2021,
-        'license_actions': 100,
-        'crop_findings': 100
-    }
+    vogtle_generator = VogtleDataGenerator(directory=options.directory)
 
-    VOGTLE_GENERATOR.generate_inspections(CONFIG['inspections'])
-    VOGTLE_GENERATOR.generate_news_feed(CONFIG['news'])
-    VOGTLE_GENERATOR.generate_public_meetings(CONFIG['public_meetings'])
-    VOGTLE_GENERATOR.generate_calendar(CONFIG['start_date'],
-                                       CONFIG['end_date'])
-    VOGTLE_GENERATOR.generate_license_actions(CONFIG['license_actions'])
-    VOGTLE_GENERATOR.generate_crop_findings(CONFIG['crop_findings'])
+    if not config:
+        config = {
+            'inspections': 800,
+            'news_feed': 100,
+            'public_meetings': 100,
+            'start_year': 2019,
+            'end_year': 2021,
+            'license_actions': 100,
+            'crop_findings': 100
+        }
+
+    vogtle_generator.generate_inspections(config['inspections'])
+    vogtle_generator.generate_news_feed(config['news_feed'])
+    vogtle_generator.generate_public_meetings(config['public_meetings'])
+    vogtle_generator.generate_calendar(config['start_year'],
+                                       config['end_year'])
+    vogtle_generator.generate_license_actions(config['license_actions'])
+    vogtle_generator.generate_crop_findings(config['crop_findings'])
 
     logging.info("Synthetic data generation complete")
+
+
+if __name__ == '__main__':
+    generate_default()
