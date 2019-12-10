@@ -6,3 +6,5 @@ __pycache__
 *.twbr
 *pytest-report.xml
 *coverage.xml
+.coverage
+.pytest_cache

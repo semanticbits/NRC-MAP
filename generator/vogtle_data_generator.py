@@ -51,6 +51,8 @@ class VogtleDataGenerator(object):
             logging.error("No directory provided, exiting..")
             sys.exit(1)
 
+        os.makedirs(directory, exist_ok=True)
+
         self.fake = Faker()
         self.fake.add_provider(ITAAC)
 
@@ -65,7 +67,7 @@ class VogtleDataGenerator(object):
                  "effort_required|facility|targeted_flag|target_amt\n"
 
         with open('{}inspections.csv'
-                  .format(self.directory), 'w') as output_file:
+                  .format(self.directory), 'w+') as output_file:
 
             output_file.write(header)
             for itaac_id in range(rows):
@@ -95,7 +97,7 @@ class VogtleDataGenerator(object):
         """
         header = "id|title|text|datetime|source_url\n"
 
-        with open('{}news_feed.csv'.format(self.directory), 'w') \
+        with open('{}news_feed.csv'.format(self.directory), 'w+') \
                 as output_file:
 
             output_file.write(header)
@@ -128,7 +130,7 @@ class VogtleDataGenerator(object):
         """
         header = "id|purpose|date|time|location|contact\n"
 
-        with open('{}public_meetings.csv'.format(self.directory), 'w') \
+        with open('{}public_meetings.csv'.format(self.directory), 'w+') \
                 as output_file:
 
             output_file.write(header)
@@ -162,7 +164,7 @@ class VogtleDataGenerator(object):
         """
         header = "id|text|status|date\n"
 
-        with open('{}license_actions.csv'.format(self.directory), 'w') \
+        with open('{}license_actions.csv'.format(self.directory), 'w+') \
                 as output_file:
 
             output_file.write(header)
@@ -188,7 +190,7 @@ class VogtleDataGenerator(object):
         """
         header = "id|description|status|date\n"
 
-        with open('{}crop_findings.csv'.format(self.directory), 'w') \
+        with open('{}crop_findings.csv'.format(self.directory), 'w+') \
                 as output_file:
 
             output_file.write(header)
@@ -219,7 +221,7 @@ class VogtleDataGenerator(object):
 
         delta = edate - sdate       # as timedelta
 
-        with open('{}calendar.csv'.format(self.directory), 'w') \
+        with open('{}calendar.csv'.format(self.directory), 'w+') \
                 as output_file:
 
             output_file.write(header)

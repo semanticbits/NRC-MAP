@@ -1,8 +1,7 @@
 #!/bin/bash
 
 # run tests
-py.test --cov-append --junitxml=../tests/pytest-report.xml --cov-report xml:../tests/coverage.xml --cov-report term --cov=./ --cov-config=.coveragerc -v ./tests 
-
+py.test --cov-append --junitxml=../test_reports/pytest-report.xml --cov-report xml:../test_reports/coverage.xml --cov-report term --cov=./ --cov-config=.coveragerc -v ./tests
 
 # log error and remove test data
 if [ $? -ne 0 ]; then

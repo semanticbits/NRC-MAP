@@ -110,7 +110,7 @@ class TestVogtleDataGenerator(object):
             'license_actions',
             'crop_findings'
         ]
-        vdg.generate_default(args=['-d', 'data/'], config=config)
+        vdg.generate_default(args=['-d', 'test_data/'], config=config)
 
         for key in data_types:
             cfg = tv.VOGTLE_CONFIG[key]
