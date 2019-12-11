@@ -11,7 +11,6 @@ This script currently generates data for the following dashboard sections:
 """
 import logging
 import os
-from os import path
 import random
 import sys
 from argparse import ArgumentParser, ArgumentError
@@ -241,7 +240,6 @@ def generate_default(args=None, config=None):
         else:
             options = ARG_PARSER.parse_args()
     except ArgumentError:
-        ARG_PARSER.print_help()
         ARG_PARSER.exit()
 
     os.makedirs(options.directory, exist_ok=True)
