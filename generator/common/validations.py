@@ -10,7 +10,7 @@ def validate_csv(filename, header, cols, rows):
     """
     Validates a files data using the provided parameters
 
-    :param file: File and path to be validated
+    :param filename: File and path to be validated
     :param header: String header expected to be on file
     :param cols: Integer number of columns expected in file
     :param rows: Integer number of rows expected in file

@@ -3,13 +3,19 @@
 Tests all Vogtle related synthetic data generator
 
 """
+import sys
+import unittest
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 from vogtle_data_generator import VogtleDataGenerator
 import vogtle_data_generator as vdg
 from common import validations
 from . import test_values as tv
 
 
-class TestVogtleDataGenerator(object):
+class TestVogtleDataGenerator(unittest.TestCase):
     """ Class for all Vogtle Data Generator testing
     """
     VogtleDataGenerator = VogtleDataGenerator(directory='test_data/')
@@ -81,9 +87,21 @@ class TestVogtleDataGenerator(object):
                                         cols=config['col_count'],
                                         rows=config['row_count'])
 
+    def test_generate_default_no_dir(self):
+        """ Test default dataset generation, with no directory parameter
+        """
+        with self.assertRaises(SystemExit):
+            VogtleDataGenerator()
+
+    def test_generate_default_bad_args(self):
+        """ Test default dataset generation, with incorrect args
+        """
+        with self.assertRaises(SystemExit):
+            vdg.generate_default(args=['-r', 'abc/'], config=None)
+
     @staticmethod
-    def test_generate_default():
-        """ Test calendar data generation
+    def test_generate_default_w_args():
+        """ Test default dataset generation, with args
         """
         config = {
             'inspections':
@@ -118,3 +136,27 @@ class TestVogtleDataGenerator(object):
                                             header=cfg['header'],
                                             cols=cfg['col_count'],
                                             rows=cfg['row_count'])
+
+    @staticmethod
+    def test_generate_default():
+        """ Test default dataset generation
+        """
+        test_config = {
+            'inspections': 800,
+            'news_feed': 100,
+            'public_meetings': 100,
+            'calendar': (365*3)+1,
+            'license_actions': 100,
+            'crop_findings': 100
+        }
+
+        testargs = ["vogtle_data_generator.py", "-d", "test_data/"]
+        with mock.patch.object(sys, 'argv', testargs):
+            vdg.generate_default()
+
+            for key in test_config:
+                cfg = tv.VOGTLE_CONFIG[key]
+                assert validations.validate_csv(filename=cfg['filename'],
+                                                header=cfg['header'],
+                                                cols=cfg['col_count'],
+                                                rows=test_config[key])
