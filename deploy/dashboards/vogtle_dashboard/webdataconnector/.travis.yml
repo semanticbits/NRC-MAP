@@ -1,0 +1,13 @@
+dist: trusty
+addons:
+  chrome: stable
+language: node_js
+node_js:
+- node
+script:
+- 'set -eo pipefail;
+   if [[ "${TRAVIS_PULL_REQUEST}" = "false" ]]; then
+     npm run test:travis;
+   else
+     npm run unit:coveralls;
+   fi'
