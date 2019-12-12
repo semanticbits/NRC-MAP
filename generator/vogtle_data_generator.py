@@ -11,7 +11,6 @@ This script currently generates data for the following dashboard sections:
 """
 import logging
 import os
-from os import path
 import random
 import sys
 from argparse import ArgumentParser, ArgumentError
@@ -51,22 +50,13 @@ class VogtleDataGenerator(object):
             logging.error("No directory provided, exiting..")
             sys.exit(1)
 
+        os.makedirs(directory, exist_ok=True)
+
         self.fake = Faker()
         self.fake.add_provider(ITAAC)
 
         if directory:
             self.directory = directory
-
-    def generate_default(self):
-        """
-        Generate a predetermined set of synthetic data
-        """
-        self.generate_inspections(800)
-        self.generate_news_feed(100)
-        self.generate_public_meetings(100)
-        self.generate_calendar(2019, 2021)
-        self.generate_license_actions(100)
-        self.generate_crop_findings(100)
 
     def generate_inspections(self, rows):
         """
@@ -76,7 +66,7 @@ class VogtleDataGenerator(object):
                  "effort_required|facility|targeted_flag|target_amt\n"
 
         with open('{}inspections.csv'
-                  .format(self.directory), 'w') as output_file:
+                  .format(self.directory), 'w+') as output_file:
 
             output_file.write(header)
             for itaac_id in range(rows):
@@ -106,7 +96,7 @@ class VogtleDataGenerator(object):
         """
         header = "id|title|text|datetime|source_url\n"
 
-        with open('{}news_feed.csv'.format(self.directory), 'w') \
+        with open('{}news_feed.csv'.format(self.directory), 'w+') \
                 as output_file:
 
             output_file.write(header)
@@ -139,7 +129,7 @@ class VogtleDataGenerator(object):
         """
         header = "id|purpose|date|time|location|contact\n"
 
-        with open('{}public_meetings.csv'.format(self.directory), 'w') \
+        with open('{}public_meetings.csv'.format(self.directory), 'w+') \
                 as output_file:
 
             output_file.write(header)
@@ -173,7 +163,7 @@ class VogtleDataGenerator(object):
         """
         header = "id|text|status|date\n"
 
-        with open('{}license_actions.csv'.format(self.directory), 'w') \
+        with open('{}license_actions.csv'.format(self.directory), 'w+') \
                 as output_file:
 
             output_file.write(header)
@@ -199,7 +189,7 @@ class VogtleDataGenerator(object):
         """
         header = "id|description|status|date\n"
 
-        with open('{}crop_findings.csv'.format(self.directory), 'w') \
+        with open('{}crop_findings.csv'.format(self.directory), 'w+') \
                 as output_file:
 
             output_file.write(header)
@@ -230,7 +220,7 @@ class VogtleDataGenerator(object):
 
         delta = edate - sdate       # as timedelta
 
-        with open('{}calendar.csv'.format(self.directory), 'w') \
+        with open('{}calendar.csv'.format(self.directory), 'w+') \
                 as output_file:
 
             output_file.write(header)
@@ -239,23 +229,44 @@ class VogtleDataGenerator(object):
                 output_file.write("%s|%s\n" % (i, day))
 
 
-if __name__ == '__main__':
+def generate_default(args=None, config=None):
+    """Generate the default set of synthetic data
+    """
     logging.info("Generating synthetic data...")
-    if not sys.argv[1:]:
-        ARG_PARSER.print_help()
-        ARG_PARSER.exit()
-
-    OPTIONS = {}
+    options = {}
     try:
-        OPTIONS = ARG_PARSER.parse_args()
-    except ArgumentError as err:
-        ARG_PARSER.print_help()
+        if args:
+            options = ARG_PARSER.parse_args(args)
+        else:
+            options = ARG_PARSER.parse_args()
+    except ArgumentError:
         ARG_PARSER.exit()
 
-    if not path.exists(OPTIONS.directory):
-        os.mkdir(OPTIONS.directory)
+    os.makedirs(options.directory, exist_ok=True)
 
-    VOGTLE_GENERATOR = VogtleDataGenerator(directory=OPTIONS.directory)
-    VOGTLE_GENERATOR.generate_default()
+    vogtle_generator = VogtleDataGenerator(directory=options.directory)
+
+    if not config:
+        config = {
+            'inspections': 800,
+            'news_feed': 100,
+            'public_meetings': 100,
+            'start_year': 2019,
+            'end_year': 2021,
+            'license_actions': 100,
+            'crop_findings': 100
+        }
+
+    vogtle_generator.generate_inspections(config['inspections'])
+    vogtle_generator.generate_news_feed(config['news_feed'])
+    vogtle_generator.generate_public_meetings(config['public_meetings'])
+    vogtle_generator.generate_calendar(config['start_year'],
+                                       config['end_year'])
+    vogtle_generator.generate_license_actions(config['license_actions'])
+    vogtle_generator.generate_crop_findings(config['crop_findings'])
 
     logging.info("Synthetic data generation complete")
+
+
+if __name__ == '__main__':
+    generate_default()

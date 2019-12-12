@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python tests/generator/vogtle_data_generator.py -d tests/generator/data/
+python generator/vogtle_data_generator.py -d generator/data/
