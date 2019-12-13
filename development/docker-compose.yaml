@@ -1,17 +1,68 @@
-version: "3.5"
+version: "3.7"
 
 services:
+
+  db:
+    container_name: nrc-map_db
+    hostname: nrc-map_db
+    image: mcr.microsoft.com/mssql/server:latest
+    environment:
+      ACCEPT_EULA: Y
+      SA_PASSWORD: YourStrong@Passw0rd
+    networks:
+      - NRC-MAP-network
+    ports:
+      - 1433:1433
+    restart: always
+    volumes:
+      - NRC-MAP-db:/var/lib/db/data
+
+  nginx:
+    container_name: nrc-map_nginx
+    image: nginx:alpine
+    networks:
+      - NRC-MAP-network
+    ports:
+      - 8080:80
+    restart: always
+    volumes:
+      - ../docs/_build/html:/usr/share/nginx/html:ro
+
+  python:
+    container_name: nrc-map_python
+    build:
+      context: ..
+      dockerfile: development/python.Dockerfile
+    depends_on:
+      - db
+    image: nrc-map_python
+    networks:
+      - NRC-MAP-network
+    ports:
+      - 8888:8080
+    restart: always
+    tty: true
+    volumes:
+      - ..:/usr/src/NRC-MAP
+
   synthetic_data_generator:
     build: 
-      context: ../generator
-      dockerfile: ../development/DataGeneratorDockerfile
+      context: ..
+      dockerfile: development/DataGeneratorDockerfile
     container_name: synthetic_data_generator
     command: tail -f /dev/null # Run Forever
     volumes:
-      - ../generator:/app/src/map/generator:rw
-      - ../tests:/app/src/map/tests:rw
+      - generator:/app/src/map/generator:rw
+      - tests:/app/src/map/tests:rw
     networks:
       - datazone
 
 networks:
   datazone:
+  NRC-MAP-network:
+    name: nrc-map
+
+volumes:
+  NRC-MAP-db:
+  generator:
+  tests:
