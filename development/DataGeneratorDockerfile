@@ -8,7 +8,7 @@ RUN mkdir -p app/src/map/tests
 WORKDIR app/src/map/generator
 
 COPY common ./common/
-COPY requirements.txt ./
+COPY ../requirements.txt ./
 COPY run.sh ./
 COPY vogtle_data_generator.py ./
 
