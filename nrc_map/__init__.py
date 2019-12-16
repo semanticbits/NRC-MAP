@@ -6,6 +6,7 @@ from os import path
 
 from . import pkg_globals
 from . import exceptions
+from . import utils
 
 __version__ = '0.1.0'
 
