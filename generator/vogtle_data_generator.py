@@ -83,8 +83,6 @@ class VogtleDataGenerator(object):
         output = []
         effort_types = ["ITAAC", "Program", "Reactive/Allegations",
                         "Technical", "Total"]
-        effort_ranges = [range(40, 80), range(10, 20),
-                         range(0, 15), range(0, 40)]
 
         with open('{}itaac_efforts.csv'
                   .format(self.directory), 'w+') as output_file:
@@ -96,17 +94,14 @@ class VogtleDataGenerator(object):
                 estimated_total = 0
 
                 itaac_id = itaac_ids[effort_id - 1]
-                for idx, effort_type in enumerate(effort_types):
-                    estimate_multiple = (random.choice([-30, -20, 0, 20, 30])
-                                         / 100)
+                for effort_type in effort_types:
 
                     if effort_type == 'Total':
                         actual = actual_total
                         estimate = estimated_total
                     else:
-                        actual = random.choice(list(effort_ranges[idx]))
-                        estimate = actual + \
-                            round((actual * estimate_multiple))
+                        actual = random.choice(list(range(0, 80)))
+                        estimate = random.choice(list(range(0, 80)))
 
                         actual_total += actual
                         estimated_total += estimate
