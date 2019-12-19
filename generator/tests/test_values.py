@@ -6,10 +6,15 @@ VOGTLE_CONFIG = {
     'inspections': {
         'filename': "test_data/inspections.csv",
         'row_count': 20,
-        'col_count': 8,
-        'header': "id|itaac_status|icn_status|"
-                  "est_completion_date|effort_required"
-                  "|facility|targeted_flag|target_amt"
+        'col_count': 6,
+        'header': "id|itaac_status|icn_status|est_completion_date|"
+                  "facility|targeted_flag"
+    },
+    'itaac_efforts': {
+        'filename': "test_data/itaac_efforts.csv",
+        'row_count': 20,
+        'col_count': 5,
+        'header': "id|itaac_id|effort_type|actual|estimate"
     },
     'news_feed': {
         'filename': "test_data/news_feed.csv",

@@ -58,41 +58,109 @@ class VogtleDataGenerator(object):
         if directory:
             self.directory = directory
 
-    def generate_inspections(self, rows):
+    @staticmethod
+    def generate_itaac_effort_str(itaac_id, effort_id,
+                                  effort_type, effort_range):
+        """Generate string, bar seperated value of itaac_effort entry
+
+        :param rows: Number of rows to generate
+        """
+        actual = random.choice(list(effort_range))
+        estimate = random.choice(list(effort_range))
+        itaac_effort_str = ("%s|%s|%s|%s|%s\n" % (effort_id,
+                                                  itaac_id,
+                                                  effort_type,
+                                                  actual,
+                                                  estimate))
+
+        return itaac_effort_str
+
+    def generate_itaac_efforts(self, itaac_ids):
+        """Generate ITAAC Efforts
+
+        :param itaac_ids: IDs of ITAACS to generate efforts for
+        """
+        output = []
+        effort_types = ["ITAAC", "Program", "Reactive/Allegations",
+                        "Technical", "Total"]
+        effort_ranges = [range(40, 80), range(10, 20),
+                         range(0, 15), range(0, 40)]
+
+        with open('{}itaac_efforts.csv'
+                  .format(self.directory), 'w+') as output_file:
+
+            # write header
+            output_file.write("id|itaac_id|effort_type|actual|estimate\n")
+            for effort_id in range(1, len(itaac_ids)+1):
+                actual_total = 0
+                estimated_total = 0
+
+                itaac_id = itaac_ids[effort_id - 1]
+                for idx, effort_type in enumerate(effort_types):
+                    estimate_multiple = (random.choice([-30, -20, 0, 20, 30])
+                                         / 100)
+
+                    if effort_type == 'Total':
+                        actual = actual_total
+                        estimate = estimated_total
+                    else:
+                        actual = random.choice(list(effort_ranges[idx]))
+                        estimate = actual + \
+                            round((actual * estimate_multiple))
+
+                        actual_total += actual
+                        estimated_total += estimate
+
+                    output.append("%s|%s|%s|%s|%s\n" % (effort_id,
+                                                        itaac_id,
+                                                        effort_type,
+                                                        actual,
+                                                        estimate))
+
+            output_file.write(''.join(output))
+
+    def generate_inspections(self, rows, generate_efforts_flag=False):
         """
         Generate synthetic data for Inspections
+
+        :param rows: Number of rows to generate
+        :param generate_efforts_flag: Boolean flag to generate effort hours
         """
         header = "id|itaac_status|icn_status|est_completion_date|" \
-                 "effort_required|facility|targeted_flag|target_amt\n"
+                 "facility|targeted_flag\n"
+        itaac_ids = []
 
         with open('{}inspections.csv'
                   .format(self.directory), 'w+') as output_file:
 
             output_file.write(header)
-            for itaac_id in range(rows):
+            for itaac_id in range(1, rows+1):
+                if generate_efforts_flag:
+                    itaac_ids.append(itaac_id)
+
                 itaac_status = self.fake.format('itaac_status')
                 icn_status = self.fake.format('icn_status')
                 est_completion_date = self.fake.format('future_datetime',
                                                        tzinfo=None)
-
-                effort_required = self.fake.format('effort_required')
                 facility = self.fake.format('facility')
                 targeted_flag = self.fake.format('true_false_flag')
-                target_amt = self.fake.format('target_amt')
 
-                output_file.write("%s|%s|%s|%s|%s|%s|%s|%s\n" %
+                output_file.write("%s|%s|%s|%s|%s|%s\n" %
                                   (itaac_id,
                                    itaac_status,
                                    icn_status,
                                    est_completion_date,
-                                   effort_required,
                                    facility,
-                                   targeted_flag,
-                                   target_amt))
+                                   targeted_flag))
+
+        if generate_efforts_flag:
+            self.generate_itaac_efforts(itaac_ids)
 
     def generate_news_feed(self, rows):
         """
         Generate synthetic data for News Feed
+
+        :param rows: Number of rows to generate
         """
         header = "id|title|text|datetime|source_url\n"
 
@@ -100,7 +168,7 @@ class VogtleDataGenerator(object):
                 as output_file:
 
             output_file.write(header)
-            for feed_id in range(rows):
+            for feed_id in range(1, rows+1):
 
                 title = self.fake.format('sentence',
                                          nb_words=5,
@@ -126,6 +194,7 @@ class VogtleDataGenerator(object):
         """
         Generate synthetic data for Public Meetings
 
+        :param rows: Number of rows to generate
         """
         header = "id|purpose|date|time|location|contact\n"
 
@@ -133,7 +202,7 @@ class VogtleDataGenerator(object):
                 as output_file:
 
             output_file.write(header)
-            for meeting_id in range(rows):
+            for meeting_id in range(1, rows+1):
                 purpose = self.fake.format('sentence',
                                            nb_words=10,
                                            variable_nb_words=True,
@@ -160,6 +229,7 @@ class VogtleDataGenerator(object):
         """
         Generate synthetic data for License Actions
 
+        :param rows: Number of rows to generate
         """
         header = "id|text|status|date\n"
 
@@ -167,7 +237,7 @@ class VogtleDataGenerator(object):
                 as output_file:
 
             output_file.write(header)
-            for license_action_id in range(rows):
+            for license_action_id in range(1, rows+1):
                 text = self.fake.format('sentence',
                                         nb_words=10,
                                         variable_nb_words=True,
@@ -186,6 +256,7 @@ class VogtleDataGenerator(object):
         """
         Generate synthetic data for License Actions
 
+        :param rows: Number of rows to generate
         """
         header = "id|description|status|date\n"
 
@@ -193,7 +264,7 @@ class VogtleDataGenerator(object):
                 as output_file:
 
             output_file.write(header)
-            for crop_finding_id in range(rows):
+            for crop_finding_id in range(1, rows+1):
                 description = self.fake.format('sentence',
                                                nb_words=10,
                                                variable_nb_words=True,
@@ -212,6 +283,7 @@ class VogtleDataGenerator(object):
         """
         Generate Calendar
 
+        :param rows: Number of rows to generate
         """
         header = "id|date\n"
 
@@ -224,13 +296,15 @@ class VogtleDataGenerator(object):
                 as output_file:
 
             output_file.write(header)
-            for i in range(delta.days + 1):
+            for i in range(1, delta.days + 2):
                 day = sdate + timedelta(days=i)
                 output_file.write("%s|%s\n" % (i, day))
 
 
 def generate_default(args=None, config=None):
     """Generate the default set of synthetic data
+
+    :param rows: Number of rows to generate
     """
     logging.info("Generating synthetic data...")
     options = {}
@@ -257,7 +331,7 @@ def generate_default(args=None, config=None):
             'crop_findings': 100
         }
 
-    vogtle_generator.generate_inspections(config['inspections'])
+    vogtle_generator.generate_inspections(config['inspections'], True)
     vogtle_generator.generate_news_feed(config['news_feed'])
     vogtle_generator.generate_public_meetings(config['public_meetings'])
     vogtle_generator.generate_calendar(config['start_year'],

@@ -40,13 +40,6 @@ class ITAAC(BaseProvider):
         return random.choice(status_options)
 
     @staticmethod
-    def effort_required():
-        """
-        Generate a randon value for effort required (in hours)
-        """
-        return random.choice(list(range(1, 80)))
-
-    @staticmethod
     def facility():
         """
         Generate a random selection of Vogtle facilities
