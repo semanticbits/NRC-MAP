@@ -1,0 +1,9 @@
+[run]
+omit =
+    setup.py
+    */tests/*
+
+[report]
+omit =
+    setup.py
+    */tests/*

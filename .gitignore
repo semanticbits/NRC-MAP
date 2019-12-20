@@ -1,10 +1,68 @@
-.DS_Store
-/todo.txt
-data
+# Compiled source
+build/*
+*.com
+dist/*
+*.egg-info/*
+*.class
+*.dll
+*.exe
+*.o
+*.pdf
 *.pyc
-__pycache__
-*.twbr
-*pytest-report.xml
+*.so
+
+# Ipython files
+.ipynb_checkpoints
+
+# Log files
+*.log
+*make.bat
+
+# OS generated files
+.DS_Store
+.DS_store?
+._*
+.Spotlight-V100
+*.swp
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Packages
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Profile files
 *coverage.xml
-.coverage
+*.coverage
+htmlcov/*
+*.profile
+
+# Project files
+/todo.txt
+*wheels
+
+# pytest files
+.cache/*
 .pytest_cache
+pytest/*
+*pytest-report.xml
+
+# Raw data
+*/data/*
+test_data/*
+
+# Sphinx files
+docs/_build/*
+docs/_static/*
+docs/_templates/*
+docs/Makefile
+
+# Tableau files
+*.twbr

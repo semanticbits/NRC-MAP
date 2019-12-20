@@ -1,3 +1,0 @@
-Faker==2.0.3
-pytest-cov==2.8.1
-pandas==0.25.3
