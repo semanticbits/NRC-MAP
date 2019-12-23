@@ -22,7 +22,10 @@ class ITAAC(BaseProvider):
         """
         status_options = [
             'UIN Accepted',
+            'UIN In Review',
             'ICN Verified',
+            'ICN Awaiting NRC Inspection',
+            'ICN In Review',
             'Not Received'
         ]
         return random.choice(status_options)
