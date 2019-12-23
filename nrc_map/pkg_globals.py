@@ -1,12 +1,13 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-""" Global Variable Module
+""" Global Variables Module
 
 """
 from pathlib import Path
 
 
+#: Package root directory path.
 PACKAGE_ROOT = Path(__file__).parents[1]
 
 

@@ -20,7 +20,7 @@ def count(number: int, quiet, verbose):
     """
     Display progressbar while counting to the user provided integer `number`.
 
-    ..note:: This is an example to follow when creating new commandline
+    .. note:: This is an example to follow when creating new commandline
         functions.
     """
     click.clear()
