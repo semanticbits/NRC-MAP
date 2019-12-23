@@ -15,8 +15,8 @@ import time
 from typing import Any, Dict, List, Optional
 import warnings
 
-from .pkg_globals import PACKAGE_ROOT
-from .exceptions import InputError
+from nrc_map.pkg_globals import PACKAGE_ROOT
+from nrc_map.exceptions import InputError
 
 
 def logger_setup(file_path: Optional[str] = None,
@@ -154,7 +154,7 @@ def warning_format():
     """
     Set warning output message format.
 
-    ..note:: For new formats add helper functions then update the \
+    .. note:: For new formats add helper functions then update the \
         `warnings.formatwarning` call.
     """
 
