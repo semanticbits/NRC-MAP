@@ -16,3 +16,4 @@
     the package root directory. 
 - MAP-116: Create a toplevel Makefile with targets for common tasks (start / 
 stop Docker, run tests, upgrade Python third party packages, ect...).
+- MAP-117: Add Sphinx documentation to the package.

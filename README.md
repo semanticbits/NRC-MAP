@@ -44,6 +44,7 @@ The current features of this repo include:
 |-- deploy                      # Items to be deployed to Docker containers
 |   |-- dashboards              # Tableau Dashboards
 |-- development                 # Development environment related files
+|-- docs                        # Sphinx configuration files
 |-- generator                   # Test related scripts and data
 |-- nrc_map                     # Python source code
 |-- test_reports                # Output directory for test reports
@@ -69,6 +70,25 @@ sh run.sh
 Synthetic data output can be found in:
 ```bash
 generator/data/
+```
+
+## View NRC-MAP package API
+To view to NRC-MAP package API first clone the repository and then issue the
+following commands to build the documentation.
+
+```bash
+make docs-init
+make docs
+```
+
+The `docs` make target will build the documentation files, which are hosted on
+the NGINX container named `nrc-map_nginx`.
+
+If the documentation files have previously been build and a user only wishes
+to view them use the `docs-view` target.
+
+```bash
+make docs-view
 ```
 
 # Tableau Dashboards

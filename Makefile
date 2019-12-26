@@ -14,7 +14,7 @@ VERSION=$(shell echo $(shell cat nrc_map/__init__.py | \
 			grep "^__version__" | \
 			cut -d = -f 2))
 
-.PHONY: upgrade-packages
+.PHONY: docs upgrade-packages
 
 deploy: docker-up
 	docker container exec $(PROJECT)_python \
@@ -36,6 +36,88 @@ docker-rebuild: envfile setup.py
 
 docker-up:
 	docker-compose -f development/docker-compose.yaml up -d
+
+docs: docker-up
+	docker container exec $(PROJECT)_python \
+		/bin/bash -c "pip install -e .[docs] \
+			      && cd docs \
+			      && make html"
+	${BROWSER} http://localhost:8080
+
+
+docs-init: docker-up
+	rm -rf docs/*
+	docker container exec $(PROJECT)_python \
+		/bin/bash -c \
+			"cd docs \
+			 && sphinx-quickstart -q \
+				-p $(PROJECT) \
+				-a "EnterAuthorName" \
+				-v $(VERSION) \
+				--ext-autodoc \
+				--ext-viewcode \
+				--makefile \
+				--no-batchfile"
+	docker-compose -f development/docker-compose.yaml restart nginx
+ifeq ("$(shell git remote)", "origin")
+	git fetch
+	git checkout origin/develop -- docs/
+else
+	docker container run --rm \
+		-v `pwd`:/usr/src/$(PROJECT) \
+		-w /usr/src/$(PROJECT)/docs \
+		ubuntu \
+		/bin/bash -c \
+			"sed -i -e 's/# import os/import os/g' conf.py \
+			 && sed -i -e 's/# import sys/import sys/g' conf.py \
+			 && sed -i \"/# sys.path.insert(0, os.path.abspath('.'))/d\" \
+				conf.py \
+			 && sed -i -e \"/import sys/a \
+				sys.path.insert(0, os.path.abspath('../nrc_map')) \
+				\n\nfrom nrc_map import __version__\" \
+				conf.py \
+			 && sed -i -e \"s/version = '0.1.0'/version = __version__/g\" \
+				conf.py \
+			 && sed -i -e \"s/release = '0.1.0'/release = __version__/g\" \
+				conf.py \
+			 && sed -i -e \"s/alabaster/agogo/g\" \
+				conf.py \
+			 && sed -i \"/   :caption: Contents:/a \
+				\\\\\n   package\" \
+				index.rst"
+	printf "%s\n" \
+		"Package Modules" \
+		"===============" \
+		"" \
+		".. toctree::" \
+		"    :maxdepth: 2" \
+		"" \
+		"cli" \
+		"---" \
+		".. automodule:: cli" \
+		"    :members:" \
+		"    :show-inheritance:" \
+		"    :synopsis: Package command line interface calls." \
+		"" \
+		"db" \
+		"--" \
+		".. automodule:: db" \
+		"    :members:" \
+		"    :show-inheritance:" \
+		"    :synopsis: Package database module." \
+		"" \
+		"utils" \
+		"-----" \
+		".. automodule:: utils" \
+		"    :members:" \
+		"    :show-inheritance:" \
+		"    :synopsis: Package utilities module." \
+		"" \
+	> "docs/package.rst"
+endif
+
+docs-view: docker-up
+	${BROWSER} http://localhost:8080
 
 ipython: docker-up
 	docker container exec -it $(PROJECT)_python ipython
