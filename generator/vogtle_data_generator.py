@@ -67,7 +67,7 @@ class VogtleDataGenerator(object):
         """
         actual = random.choice(list(effort_range))
         estimate = random.choice(list(effort_range))
-        itaac_effort_str = ("%s|%s|%s|%s|%s\n" % (effort_id,
+        itaac_effort_str = ("\n%s|%s|%s|%s|%s" % (effort_id,
                                                   itaac_id,
                                                   effort_type,
                                                   actual,
@@ -88,7 +88,7 @@ class VogtleDataGenerator(object):
                   .format(self.directory), 'w+') as output_file:
 
             # write header
-            output_file.write("id|itaac_id|effort_type|actual|estimate\n")
+            output_file.write("id|itaac_id|effort_type|actual|estimate")
             for effort_id in range(1, len(itaac_ids)+1):
                 actual_total = 0
                 estimated_total = 0
@@ -108,7 +108,7 @@ class VogtleDataGenerator(object):
                         actual_total += actual
                         estimated_total += estimate
 
-                    output.append("%s|%s|%s|%s|%s\n" % (effort_id,
+                    output.append("\n%s|%s|%s|%s|%s" % (effort_id,
                                                         itaac_id,
                                                         effort_type,
                                                         actual,
@@ -124,7 +124,7 @@ class VogtleDataGenerator(object):
         :param generate_efforts_flag: Boolean flag to generate effort hours
         """
         header = "id|itaac_status|icn_status|est_completion_date|" \
-                 "date_received|facility|targeted_flag\n"
+                 "date_received|facility|targeted_flag"
         itaac_ids = []
 
         with open('{}inspections.csv'
@@ -141,12 +141,13 @@ class VogtleDataGenerator(object):
                     [self.fake.format('future_date'),
                      None])
                 date_received = self.fake.format(
-                    'past_date',
-                    start_date="-120d")
+                    'date_between_dates',
+                    date_start=datetime.now() - timedelta(days=720),
+                    date_end=datetime.now())
                 facility = self.fake.format('facility')
                 targeted_flag = self.fake.format('true_false_flag')
 
-                output_file.write("%s|%s|%s|%s|%s|%s|%s\n" %
+                output_file.write("\n%s|%s|%s|%s|%s|%s|%s" %
                                   (itaac_id,
                                    itaac_status,
                                    icn_status,
@@ -164,7 +165,7 @@ class VogtleDataGenerator(object):
 
         :param rows: Number of rows to generate
         """
-        header = "id|title|text|datetime|source_url\n"
+        header = "id|title|text|datetime|source_url"
 
         with open('{}news_feed.csv'.format(self.directory), 'w+') \
                 as output_file:
@@ -185,7 +186,7 @@ class VogtleDataGenerator(object):
                 source_url = "http://www.{}.com/{}".format(
                     self.fake.format('word'), self.fake.format('word'))
 
-                output_file.write("%s|%s|%s|%s|%s\n" %
+                output_file.write("\n%s|%s|%s|%s|%s" %
                                   (feed_id,
                                    title,
                                    text,
@@ -198,7 +199,7 @@ class VogtleDataGenerator(object):
 
         :param rows: Number of rows to generate
         """
-        header = "id|purpose|date|time|location|contact\n"
+        header = "id|purpose|date|time|location|contact"
 
         with open('{}public_meetings.csv'.format(self.directory), 'w+') \
                 as output_file:
@@ -219,7 +220,7 @@ class VogtleDataGenerator(object):
                     self.fake.format('name'),
                     self.fake.format('phone_number'))
 
-                output_file.write("%s|%s|%s|%s|%s|%s\n" %
+                output_file.write("\n%s|%s|%s|%s|%s|%s" %
                                   (meeting_id,
                                    purpose,
                                    meeting_date,
@@ -233,7 +234,7 @@ class VogtleDataGenerator(object):
 
         :param rows: Number of rows to generate
         """
-        header = "id|text|status|date\n"
+        header = "id|text|status|date"
 
         with open('{}license_actions.csv'.format(self.directory), 'w+') \
                 as output_file:
@@ -248,7 +249,7 @@ class VogtleDataGenerator(object):
                                                        tzinfo=None)
                 status = random.choice(["Open", "Closed"])
 
-                output_file.write("%s|%s|%s|%s\n" %
+                output_file.write("\n%s|%s|%s|%s" %
                                   (license_action_id,
                                    text,
                                    status,
@@ -260,7 +261,7 @@ class VogtleDataGenerator(object):
 
         :param rows: Number of rows to generate
         """
-        header = "id|description|status|date\n"
+        header = "id|description|status|date"
 
         with open('{}crop_findings.csv'.format(self.directory), 'w+') \
                 as output_file:
@@ -275,7 +276,7 @@ class VogtleDataGenerator(object):
                                                          tzinfo=None)
                 status = random.choice(["Open", "Closed"])
 
-                output_file.write("%s|%s|%s|%s\n" %
+                output_file.write("\n%s|%s|%s|%s" %
                                   (crop_finding_id,
                                    description,
                                    status,
@@ -287,7 +288,7 @@ class VogtleDataGenerator(object):
 
         :param rows: Number of rows to generate
         """
-        header = "id|date\n"
+        header = "id|date"
 
         sdate = date(start_year, 1, 1)   # start date
         edate = date(end_year, 12, 31)   # end date
@@ -300,7 +301,7 @@ class VogtleDataGenerator(object):
             output_file.write(header)
             for i in range(1, delta.days + 2):
                 day = sdate + timedelta(days=i)
-                output_file.write("%s|%s\n" % (i, day))
+                output_file.write("\n%s|%s" % (i, day))
 
 
 def generate_default(args=None, config=None):
@@ -327,7 +328,7 @@ def generate_default(args=None, config=None):
             'inspections': 800,
             'news_feed': 100,
             'public_meetings': 100,
-            'start_year': 2019,
+            'start_year': 2017,
             'end_year': 2021,
             'license_actions': 100,
             'crop_findings': 100

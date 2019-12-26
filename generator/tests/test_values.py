@@ -6,9 +6,9 @@ VOGTLE_CONFIG = {
     'inspections': {
         'filename': "test_data/inspections.csv",
         'row_count': 20,
-        'col_count': 6,
+        'col_count': 7,
         'header': "id|itaac_status|icn_status|est_completion_date|"
-                  "facility|targeted_flag"
+                  "date_received|facility|targeted_flag"
     },
     'itaac_efforts': {
         'filename': "test_data/itaac_efforts.csv",
@@ -42,10 +42,10 @@ VOGTLE_CONFIG = {
     },
     'calendar': {
         'filename': "test_data/calendar.csv",
-        'row_count': (365*2)+1,
+        'row_count': (365*5)+1,
         'col_count': 2,
-        'start_year': 2019,
-        'end_year': 2020,
+        'start_year': 2017,
+        'end_year': 2021,
         'header': "id|date"
     }
 }

@@ -20,12 +20,12 @@ def validate_csv(filename, header, cols, rows):
     data = pd.read_csv(filename, delimiter='|')
 
     # validate header
-    header_result = header == '|'.join(list(data.columns.values))
+    assert header == '|'.join(list(data.columns.values))
 
     # validate column count
-    column_result = data.shape[1] == cols
+    assert data.shape[1] == cols
 
     # validate row count
-    row_result = data.shape[0] == rows
+    assert data.shape[0] == rows
 
-    return (header_result == column_result == row_result) is True
+    # return (header_result == column_result == row_result) is True
