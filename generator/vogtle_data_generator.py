@@ -63,17 +63,20 @@ class VogtleDataGenerator(object):
                                   effort_type, effort_range):
         """Generate string, bar separated value of itaac_effort entry
 
-        :param rows: Number of rows to generate
+        :param itaac_id: ID of ITAAC for row of effort
+        :param effort_id: The unique effort_id
+        :param effort_type: The type of effort
+        :param effort_range: Range of values to be used for actual and estimate
+                             hour values
         """
-        actual = random.choice(list(effort_range))
-        estimate = random.choice(list(effort_range))
-        itaac_effort_str = ("\n%s|%s|%s|%s|%s" % (effort_id,
-                                                  itaac_id,
-                                                  effort_type,
-                                                  actual,
-                                                  estimate))
-
-        return itaac_effort_str
+        effort_range = list(effort_range)
+        actual = random.choice(effort_range)
+        estimate = random.choice(effort_range)
+        return ("\n%s|%s|%s|%s|%s" % (effort_id,
+                                      itaac_id,
+                                      effort_type,
+                                      actual,
+                                      estimate))
 
     def generate_itaac_efforts(self, itaac_ids):
         """Generate ITAAC Efforts
@@ -87,32 +90,7 @@ class VogtleDataGenerator(object):
             "Technical",
             "Total",
         ]
-        output = []
-
-        with open(f'{self.directory}itaac_efforts.csv', 'w+') as output_file:
-
-            for idx, itaac_id in enumerate(itaac_ids, 1):
-                actual = 0
-                estimated = 0
-
-                for effort_type in effort_types:
-                    if effort_type == 'Total':
-                        output.append(f'\n{idx}|'
-                                      f'{itaac_id}|'
-                                      f'{effort_type}|'
-                                      f'{actual}|'
-                                      f'{estimated}')
-                    else:
-                        actual += random.randint(0, 120)
-                        estimated += random.randint(0, 120)
-
-            output_file.write("id|itaac_id|effort_type|actual|estimate")
-            output_file.write(''.join(output)
-        """Generate ITAAC Efforts
-
-        :param itaac_ids: IDs of ITAACS to generate efforts for
-        """
-        output = []
+        output = ["id|itaac_id|effort_type|actual|estimate"]
         effort_types = ["ITAAC", "Program", "Reactive/Allegations",
                         "Technical", "Total"]
 
@@ -120,7 +98,6 @@ class VogtleDataGenerator(object):
                   .format(self.directory), 'w+') as output_file:
 
             # write header
-            output_file.write("id|itaac_id|effort_type|actual|estimate")
             for effort_id in range(1, len(itaac_ids)+1):
                 actual_total = 0
                 estimated_total = 0
@@ -155,7 +132,6 @@ class VogtleDataGenerator(object):
         :param rows: Number of rows to generate
         :param generate_efforts_flag: Boolean flag to generate effort hours
         """
-        header = "id|itaac_status|icn_status|est_completion_date|" \
         header = (
             'id|'
             'itaac_status|'
@@ -347,7 +323,8 @@ class VogtleDataGenerator(object):
 def generate_default(args=None, config=None):
     """Generate the default set of synthetic data
 
-    :param rows: Number of rows to generate
+    :param args: Command line args
+    :param config: configuration fo generator
     """
     logging.info("Generating synthetic data...")
     options = {}
