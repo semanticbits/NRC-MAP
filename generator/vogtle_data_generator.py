@@ -61,7 +61,7 @@ class VogtleDataGenerator(object):
     @staticmethod
     def generate_itaac_effort_str(itaac_id, effort_id,
                                   effort_type, effort_range):
-        """Generate string, bar seperated value of itaac_effort entry
+        """Generate string, bar separated value of itaac_effort entry
 
         :param rows: Number of rows to generate
         """
