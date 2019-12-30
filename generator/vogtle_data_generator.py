@@ -156,7 +156,15 @@ class VogtleDataGenerator(object):
         :param generate_efforts_flag: Boolean flag to generate effort hours
         """
         header = "id|itaac_status|icn_status|est_completion_date|" \
-                 "date_received|facility|targeted_flag"
+        header = (
+            'id|'
+            'itaac_status|'
+            'icn_status|'
+            'est_completion_date|'
+            'date_received|'
+            'facility|'
+            'targeted_flag'
+        )
         itaac_ids = []
 
         with open('{}inspections.csv'
