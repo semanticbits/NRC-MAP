@@ -90,6 +90,38 @@ class VogtleDataGenerator(object):
             "Technical",
             "Total",
         ]
+        output = []
+
+        with open(f'{self.directory}itaac_efforts.csv', 'w+') as output_file:
+
+            for idx, itaac_id in enumerate(itaac_ids, 1):
+                actual = 0
+                estimated = 0
+
+                for effort_type in effort_types:
+                    if effort_type == 'Total':
+                        output.append(f'\n{idx}|'
+                                      f'{itaac_id}|'
+                                      f'{effort_type}|'
+                                      f'{actual}|'
+                                      f'{estimated}')
+                    else:
+                        actual += random.randint(0, 120)
+                        estimated += random.randint(0, 120)
+
+            output_file.write("id|itaac_id|effort_type|actual|estimate")
+            output_file.write(''.join(output)
+        """Generate ITAAC Efforts
+
+        :param itaac_ids: IDs of ITAACS to generate efforts
+        """
+        effort_types = [
+            "ITAAC",
+            "Program",
+            "Reactive/Allegations",
+            "Technical",
+            "Total",
+        ]
         output = ["id|itaac_id|effort_type|actual|estimate"]
         effort_types = ["ITAAC", "Program", "Reactive/Allegations",
                         "Technical", "Total"]
