@@ -72,17 +72,27 @@ class VogtleDataGenerator(object):
         effort_range = list(effort_range)
         actual = random.choice(effort_range)
         estimate = random.choice(effort_range)
-        return ("\n%s|%s|%s|%s|%s" % (effort_id,
-                                      itaac_id,
-                                      effort_type,
-                                      actual,
-                                      estimate))
+
+        return (
+            f'\n{effort_id}|'
+            f'{itaac_id}|'
+            f'{effort_type}|'
+            f'{actual}|'
+            f'{estimated}'
+        )
 
     def generate_itaac_efforts(self, itaac_ids):
         """Generate ITAAC Efforts
 
         :param itaac_ids: IDs of ITAACS to generate efforts
         """
+        header = (
+            'id|'
+            'itaac_id|'
+            'effort_type|'
+            'actual|'
+            'estimate'
+        )
         effort_types = [
             "ITAAC",
             "Program",
@@ -90,7 +100,7 @@ class VogtleDataGenerator(object):
             "Technical",
             "Total",
         ]
-        output = []
+        output = [header]
 
         with open(f'{self.directory}itaac_efforts.csv', 'w+') as output_file:
 
@@ -108,52 +118,6 @@ class VogtleDataGenerator(object):
                     else:
                         actual += random.randint(0, 120)
                         estimated += random.randint(0, 120)
-
-            output_file.write("id|itaac_id|effort_type|actual|estimate")
-            output_file.write(''.join(output)
-        """Generate ITAAC Efforts
-
-        :param itaac_ids: IDs of ITAACS to generate efforts
-        """
-        effort_types = [
-            "ITAAC",
-            "Program",
-            "Reactive/Allegations",
-            "Technical",
-            "Total",
-        ]
-        output = ["id|itaac_id|effort_type|actual|estimate"]
-        effort_types = ["ITAAC", "Program", "Reactive/Allegations",
-                        "Technical", "Total"]
-
-        with open('{}itaac_efforts.csv'
-                  .format(self.directory), 'w+') as output_file:
-
-            # write header
-            for effort_id in range(1, len(itaac_ids)+1):
-                actual_total = 0
-                estimated_total = 0
-
-                itaac_id = itaac_ids[effort_id - 1]
-                for effort_type in effort_types:
-
-                    if effort_type == 'Total':
-                        actual = actual_total
-                        estimate = estimated_total
-                    else:
-                        actual = random.choice(list(range(0, random.choice(
-                            [40, 60, 80, 100, 120]))))
-                        estimate = random.choice(list(range(0, random.choice(
-                            [40, 60, 80, 100, 120]))))
-
-                        actual_total += actual
-                        estimated_total += estimate
-
-                    output.append("\n%s|%s|%s|%s|%s" % (effort_id,
-                                                        itaac_id,
-                                                        effort_type,
-                                                        actual,
-                                                        estimate))
 
             output_file.write(''.join(output))
 
@@ -174,11 +138,11 @@ class VogtleDataGenerator(object):
             'targeted_flag'
         )
         itaac_ids = []
+        output = [header]
 
         with open('{}inspections.csv'
                   .format(self.directory), 'w+') as output_file:
 
-            output_file.write(header)
             for itaac_id in range(1, rows+1):
                 if generate_efforts_flag:
                     itaac_ids.append(itaac_id)
@@ -195,14 +159,15 @@ class VogtleDataGenerator(object):
                 facility = self.fake.format('facility')
                 targeted_flag = self.fake.format('true_false_flag')
 
-                output_file.write("\n%s|%s|%s|%s|%s|%s|%s" %
-                                  (itaac_id,
-                                   itaac_status,
-                                   icn_status,
-                                   est_completion_date,
-                                   date_received,
-                                   facility,
-                                   targeted_flag))
+                output.append(f'\n{itaac_id}|'
+                              f'{itaac_status}|'
+                              f'{icn_status}|'
+                              f'{est_completion_date}|'
+                              f'{date_received}|'
+                              f'{facility}|'
+                              f'{targeted_flag}')
+
+            output_file.write(''.join(output))
 
         if generate_efforts_flag:
             self.generate_itaac_efforts(itaac_ids)
@@ -213,12 +178,17 @@ class VogtleDataGenerator(object):
 
         :param rows: Number of rows to generate
         """
-        header = "id|title|text|datetime|source_url"
-
+        header = (
+            'id|'
+            'title|'
+            'text|'
+            'datetime|'
+            'source_url'
+        )
+        output = [header]
         with open('{}news_feed.csv'.format(self.directory), 'w+') \
                 as output_file:
 
-            output_file.write(header)
             for feed_id in range(1, rows+1):
 
                 title = self.fake.format('sentence',
@@ -234,12 +204,13 @@ class VogtleDataGenerator(object):
                 source_url = "http://www.{}.com/{}".format(
                     self.fake.format('word'), self.fake.format('word'))
 
-                output_file.write("\n%s|%s|%s|%s|%s" %
-                                  (feed_id,
-                                   title,
-                                   text,
-                                   news_datetime,
-                                   source_url))
+                output.append(f'\n{feed_id}|'
+                              f'{title}|'
+                              f'{text}|'
+                              f'{news_datetime}|'
+                              f'{source_url}')
+
+            output_file.write(''.join(output))
 
     def generate_public_meetings(self, rows):
         """
@@ -247,12 +218,19 @@ class VogtleDataGenerator(object):
 
         :param rows: Number of rows to generate
         """
-        header = "id|purpose|date|time|location|contact"
+        header = (
+            'id|'
+            'purpose|'
+            'date|'
+            'time|l'
+            'ocation|'
+            'contact'
+        )
+        output = [header]
 
         with open('{}public_meetings.csv'.format(self.directory), 'w+') \
                 as output_file:
 
-            output_file.write(header)
             for meeting_id in range(1, rows+1):
                 purpose = self.fake.format('sentence',
                                            nb_words=10,
@@ -268,13 +246,14 @@ class VogtleDataGenerator(object):
                     self.fake.format('name'),
                     self.fake.format('phone_number'))
 
-                output_file.write("\n%s|%s|%s|%s|%s|%s" %
-                                  (meeting_id,
-                                   purpose,
-                                   meeting_date,
-                                   time,
-                                   location,
-                                   contact))
+                output.append(f'\n{meeting_id}|'
+                              f'{purpose}|'
+                              f'{meeting_date}|'
+                              f'{time}|'
+                              f'{location}|'
+                              f'{contact}')
+
+            output_file.write(''.join(output))
 
     def generate_license_actions(self, rows):
         """
@@ -282,12 +261,17 @@ class VogtleDataGenerator(object):
 
         :param rows: Number of rows to generate
         """
-        header = "id|text|status|date"
+        header = (
+            'id|'
+            'text|'
+            'status|'
+            'date'
+        )
+        output = [header]
 
         with open('{}license_actions.csv'.format(self.directory), 'w+') \
                 as output_file:
 
-            output_file.write(header)
             for license_action_id in range(1, rows+1):
                 text = self.fake.format('sentence',
                                         nb_words=10,
@@ -297,11 +281,12 @@ class VogtleDataGenerator(object):
                                                        tzinfo=None)
                 status = random.choice(["Open", "Closed"])
 
-                output_file.write("\n%s|%s|%s|%s" %
-                                  (license_action_id,
-                                   text,
-                                   status,
-                                   license_action_date))
+                output.append(f'\n{license_action_id}|'
+                              f'{text}|'
+                              f'{status}|'
+                              f'{license_action_date}')
+
+            output_file.write(''.join(output))
 
     def generate_crop_findings(self, rows):
         """
@@ -309,12 +294,17 @@ class VogtleDataGenerator(object):
 
         :param rows: Number of rows to generate
         """
-        header = "id|description|status|date"
+        header = (
+            'id|'
+            'description|'
+            'status|'
+            'date'
+        )
+        output = [header]
 
         with open('{}crop_findings.csv'.format(self.directory), 'w+') \
                 as output_file:
 
-            output_file.write(header)
             for crop_finding_id in range(1, rows+1):
                 description = self.fake.format('sentence',
                                                nb_words=10,
@@ -324,11 +314,12 @@ class VogtleDataGenerator(object):
                                                          tzinfo=None)
                 status = random.choice(["Open", "Closed"])
 
-                output_file.write("\n%s|%s|%s|%s" %
-                                  (crop_finding_id,
-                                   description,
-                                   status,
-                                   crop_finding_datetime))
+                output.append(f'\n{crop_finding_id}|'
+                              f'{description}|'
+                              f'{status}|'
+                              f'{crop_finding_datetime}')
+
+            output_file.write(''.join(output))
 
     def generate_calendar(self, start_year, end_year):
         """
@@ -336,7 +327,11 @@ class VogtleDataGenerator(object):
 
         :param rows: Number of rows to generate
         """
-        header = "id|date"
+        header = (
+            'id|'
+            'date'
+        )
+        output = [header]
 
         sdate = date(start_year, 1, 1)   # start date
         edate = date(end_year, 12, 31)   # end date
@@ -346,10 +341,12 @@ class VogtleDataGenerator(object):
         with open('{}calendar.csv'.format(self.directory), 'w+') \
                 as output_file:
 
-            output_file.write(header)
             for i in range(1, delta.days + 2):
                 day = sdate + timedelta(days=i)
-                output_file.write("\n%s|%s" % (i, day))
+                output.append(f'\n{i}|'
+                              f'{day}')
+
+            output_file.write(''.join(output))
 
 
 def generate_default(args=None, config=None):
