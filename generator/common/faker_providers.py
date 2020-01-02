@@ -22,7 +22,10 @@ class ITAAC(BaseProvider):
         """
         status_options = [
             'UIN Accepted',
+            'UIN In Review',
             'ICN Verified',
+            'ICN Awaiting NRC Inspection',
+            'ICN In Review',
             'Not Received'
         ]
         return random.choice(status_options)
@@ -38,13 +41,6 @@ class ITAAC(BaseProvider):
             'Failed'
         ]
         return random.choice(status_options)
-
-    @staticmethod
-    def effort_required():
-        """
-        Generate a randon value for effort required (in hours)
-        """
-        return random.choice(list(range(1, 80)))
 
     @staticmethod
     def facility():

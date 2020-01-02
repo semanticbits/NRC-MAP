@@ -14,7 +14,7 @@ import os
 import random
 import sys
 from argparse import ArgumentParser, ArgumentError
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from faker import Faker
 from common.faker_providers import ITAAC
 
@@ -58,49 +58,138 @@ class VogtleDataGenerator(object):
         if directory:
             self.directory = directory
 
-    def generate_inspections(self, rows):
+    @staticmethod
+    def generate_itaac_effort_str(itaac_id, effort_id,
+                                  effort_type, effort_range):
+        """Generate string, bar separated value of itaac_effort entry
+
+        :param itaac_id: ID of ITAAC for row of effort
+        :param effort_id: The unique effort_id
+        :param effort_type: The type of effort
+        :param effort_range: Range of values to be used for actual and estimate
+                             hour values
+        """
+        effort_range = list(effort_range)
+        actual = random.choice(effort_range)
+        estimate = random.choice(effort_range)
+
+        return (
+            f'\n{effort_id}|'
+            f'{itaac_id}|'
+            f'{effort_type}|'
+            f'{actual}|'
+            f'{estimated}'
+        )
+
+    def generate_itaac_efforts(self, itaac_ids):
+        """Generate ITAAC Efforts
+
+        :param itaac_ids: IDs of ITAACS to generate efforts
+        """
+        header = (
+            'id|'
+            'itaac_id|'
+            'effort_type|'
+            'actual|'
+            'estimate'
+        )
+        effort_types = [
+            "ITAAC",
+            "Program",
+            "Reactive/Allegations",
+            "Technical",
+            "Total",
+        ]
+        output = [header]
+
+        with open(f'{self.directory}itaac_efforts.csv', 'w+') as output_file:
+
+            for idx, itaac_id in enumerate(itaac_ids, 1):
+                actual = 0
+                estimated = 0
+
+                for effort_type in effort_types:
+                    if effort_type == 'Total':
+                        output.append(f'\n{idx}|'
+                                      f'{itaac_id}|'
+                                      f'{effort_type}|'
+                                      f'{actual}|'
+                                      f'{estimated}')
+                    else:
+                        actual += random.randint(0, 120)
+                        estimated += random.randint(0, 120)
+
+            output_file.write(''.join(output))
+
+    def generate_inspections(self, rows, generate_efforts_flag=False):
         """
         Generate synthetic data for Inspections
+
+        :param rows: Number of rows to generate
+        :param generate_efforts_flag: Boolean flag to generate effort hours
         """
-        header = "id|itaac_status|icn_status|est_completion_date|" \
-                 "effort_required|facility|targeted_flag|target_amt\n"
+        header = (
+            'id|'
+            'itaac_status|'
+            'icn_status|'
+            'est_completion_date|'
+            'date_received|'
+            'facility|'
+            'targeted_flag'
+        )
+        itaac_ids = []
+        output = [header]
 
         with open('{}inspections.csv'
                   .format(self.directory), 'w+') as output_file:
 
-            output_file.write(header)
-            for itaac_id in range(rows):
+            for itaac_id in range(1, rows+1):
+                if generate_efforts_flag:
+                    itaac_ids.append(itaac_id)
+
                 itaac_status = self.fake.format('itaac_status')
                 icn_status = self.fake.format('icn_status')
-                est_completion_date = self.fake.format('future_datetime',
-                                                       tzinfo=None)
-
-                effort_required = self.fake.format('effort_required')
+                est_completion_date = random.choice(
+                    [self.fake.format('future_date'),
+                     None])
+                date_received = self.fake.format(
+                    'date_between_dates',
+                    date_start=datetime.now() - timedelta(days=720),
+                    date_end=datetime.now())
                 facility = self.fake.format('facility')
                 targeted_flag = self.fake.format('true_false_flag')
-                target_amt = self.fake.format('target_amt')
 
-                output_file.write("%s|%s|%s|%s|%s|%s|%s|%s\n" %
-                                  (itaac_id,
-                                   itaac_status,
-                                   icn_status,
-                                   est_completion_date,
-                                   effort_required,
-                                   facility,
-                                   targeted_flag,
-                                   target_amt))
+                output.append(f'\n{itaac_id}|'
+                              f'{itaac_status}|'
+                              f'{icn_status}|'
+                              f'{est_completion_date}|'
+                              f'{date_received}|'
+                              f'{facility}|'
+                              f'{targeted_flag}')
+
+            output_file.write(''.join(output))
+
+        if generate_efforts_flag:
+            self.generate_itaac_efforts(itaac_ids)
 
     def generate_news_feed(self, rows):
         """
         Generate synthetic data for News Feed
-        """
-        header = "id|title|text|datetime|source_url\n"
 
+        :param rows: Number of rows to generate
+        """
+        header = (
+            'id|'
+            'title|'
+            'text|'
+            'datetime|'
+            'source_url'
+        )
+        output = [header]
         with open('{}news_feed.csv'.format(self.directory), 'w+') \
                 as output_file:
 
-            output_file.write(header)
-            for feed_id in range(rows):
+            for feed_id in range(1, rows+1):
 
                 title = self.fake.format('sentence',
                                          nb_words=5,
@@ -110,30 +199,39 @@ class VogtleDataGenerator(object):
                                         nb_words=100,
                                         variable_nb_words=False,
                                         ext_word_list=None)
-                datetime = self.fake.format('future_datetime',
-                                            tzinfo=None)
+                news_datetime = self.fake.format('future_datetime',
+                                                 tzinfo=None)
                 source_url = "http://www.{}.com/{}".format(
                     self.fake.format('word'), self.fake.format('word'))
 
-                output_file.write("%s|%s|%s|%s|%s\n" %
-                                  (feed_id,
-                                   title,
-                                   text,
-                                   datetime,
-                                   source_url))
+                output.append(f'\n{feed_id}|'
+                              f'{title}|'
+                              f'{text}|'
+                              f'{news_datetime}|'
+                              f'{source_url}')
+
+            output_file.write(''.join(output))
 
     def generate_public_meetings(self, rows):
         """
         Generate synthetic data for Public Meetings
 
+        :param rows: Number of rows to generate
         """
-        header = "id|purpose|date|time|location|contact\n"
+        header = (
+            'id|'
+            'purpose|'
+            'date|'
+            'time|l'
+            'ocation|'
+            'contact'
+        )
+        output = [header]
 
         with open('{}public_meetings.csv'.format(self.directory), 'w+') \
                 as output_file:
 
-            output_file.write(header)
-            for meeting_id in range(rows):
+            for meeting_id in range(1, rows+1):
                 purpose = self.fake.format('sentence',
                                            nb_words=10,
                                            variable_nb_words=True,
@@ -148,26 +246,33 @@ class VogtleDataGenerator(object):
                     self.fake.format('name'),
                     self.fake.format('phone_number'))
 
-                output_file.write("%s|%s|%s|%s|%s|%s\n" %
-                                  (meeting_id,
-                                   purpose,
-                                   meeting_date,
-                                   time,
-                                   location,
-                                   contact))
+                output.append(f'\n{meeting_id}|'
+                              f'{purpose}|'
+                              f'{meeting_date}|'
+                              f'{time}|'
+                              f'{location}|'
+                              f'{contact}')
+
+            output_file.write(''.join(output))
 
     def generate_license_actions(self, rows):
         """
         Generate synthetic data for License Actions
 
+        :param rows: Number of rows to generate
         """
-        header = "id|text|status|date\n"
+        header = (
+            'id|'
+            'text|'
+            'status|'
+            'date'
+        )
+        output = [header]
 
         with open('{}license_actions.csv'.format(self.directory), 'w+') \
                 as output_file:
 
-            output_file.write(header)
-            for license_action_id in range(rows):
+            for license_action_id in range(1, rows+1):
                 text = self.fake.format('sentence',
                                         nb_words=10,
                                         variable_nb_words=True,
@@ -176,44 +281,57 @@ class VogtleDataGenerator(object):
                                                        tzinfo=None)
                 status = random.choice(["Open", "Closed"])
 
-                output_file.write("%s|%s|%s|%s\n" %
-                                  (license_action_id,
-                                   text,
-                                   status,
-                                   license_action_date))
+                output.append(f'\n{license_action_id}|'
+                              f'{text}|'
+                              f'{status}|'
+                              f'{license_action_date}')
+
+            output_file.write(''.join(output))
 
     def generate_crop_findings(self, rows):
         """
         Generate synthetic data for License Actions
 
+        :param rows: Number of rows to generate
         """
-        header = "id|description|status|date\n"
+        header = (
+            'id|'
+            'description|'
+            'status|'
+            'date'
+        )
+        output = [header]
 
         with open('{}crop_findings.csv'.format(self.directory), 'w+') \
                 as output_file:
 
-            output_file.write(header)
-            for crop_finding_id in range(rows):
+            for crop_finding_id in range(1, rows+1):
                 description = self.fake.format('sentence',
                                                nb_words=10,
                                                variable_nb_words=True,
                                                ext_word_list=None)
-                datetime = self.fake.format('future_datetime',
-                                            tzinfo=None)
+                crop_finding_datetime = self.fake.format('future_datetime',
+                                                         tzinfo=None)
                 status = random.choice(["Open", "Closed"])
 
-                output_file.write("%s|%s|%s|%s\n" %
-                                  (crop_finding_id,
-                                   description,
-                                   status,
-                                   datetime))
+                output.append(f'\n{crop_finding_id}|'
+                              f'{description}|'
+                              f'{status}|'
+                              f'{crop_finding_datetime}')
+
+            output_file.write(''.join(output))
 
     def generate_calendar(self, start_year, end_year):
         """
         Generate Calendar
 
+        :param rows: Number of rows to generate
         """
-        header = "id|date\n"
+        header = (
+            'id|'
+            'date'
+        )
+        output = [header]
 
         sdate = date(start_year, 1, 1)   # start date
         edate = date(end_year, 12, 31)   # end date
@@ -223,14 +341,19 @@ class VogtleDataGenerator(object):
         with open('{}calendar.csv'.format(self.directory), 'w+') \
                 as output_file:
 
-            output_file.write(header)
-            for i in range(delta.days + 1):
+            for i in range(1, delta.days + 2):
                 day = sdate + timedelta(days=i)
-                output_file.write("%s|%s\n" % (i, day))
+                output.append(f'\n{i}|'
+                              f'{day}')
+
+            output_file.write(''.join(output))
 
 
 def generate_default(args=None, config=None):
     """Generate the default set of synthetic data
+
+    :param args: Command line args
+    :param config: configuration fo generator
     """
     logging.info("Generating synthetic data...")
     options = {}
@@ -251,13 +374,13 @@ def generate_default(args=None, config=None):
             'inspections': 800,
             'news_feed': 100,
             'public_meetings': 100,
-            'start_year': 2019,
+            'start_year': 2017,
             'end_year': 2021,
             'license_actions': 100,
             'crop_findings': 100
         }
 
-    vogtle_generator.generate_inspections(config['inspections'])
+    vogtle_generator.generate_inspections(config['inspections'], True)
     vogtle_generator.generate_news_feed(config['news_feed'])
     vogtle_generator.generate_public_meetings(config['public_meetings'])
     vogtle_generator.generate_calendar(config['start_year'],
