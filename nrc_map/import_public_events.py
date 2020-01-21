@@ -19,6 +19,6 @@ for row in content.split('<tr class='):
     else:
         first = False
 
-with io.open("C:\\Users\\Steve\\Documents\\insert_events.sql", "w", encoding="utf-8") as f:
+with io.open("insert_events.sql", "w", encoding="utf-8") as f:
     f.write(sql)
 
