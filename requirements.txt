@@ -93,3 +93,4 @@ urllib3==1.25.7
 wcwidth==0.1.7
 webencodings==0.5.1
 widgetsnbextension==3.5.1
+setuptools>=65.5.1 # not directly required, pinned by Snyk to avoid a vulnerability
